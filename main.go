@@ -19,9 +19,10 @@ import (
 func main() {
 
 	if len(os.Args) != 2 {
-		panic("Correct usage: <version>")
+		panic("Arguments needed: <version> <nsets>")
 	}
-	nsets := 2
+	nsets64, _ := strconv.ParseInt(os.Args[2], 10, 0)
+	nsets := int(nsets64)
 	version := os.Args[1]
 	dbname := "lor-" + version + ".db"
 
@@ -73,7 +74,7 @@ func main() {
 			jsonpath = strings.ReplaceAll(jsonpath, "-lite", "")
 			DownloadFile(filepath + ".zip")
 			Unzip("downloads/"+filepath+".zip", strings.ReplaceAll("downloads/"+filepath, "-lite", ""))
-			ParseAndInsert(jsonpath, locale, sqlDb)
+			ParseAndInsert(jsonpath, set, locale, sqlDb)
 		}
 	}
 }
@@ -174,7 +175,7 @@ func CreateTables(db *sql.DB, dbQ []string) {
 }
 
 //ParseAndInsert does this thing
-func ParseAndInsert(file string, locale string, db *sql.DB) {
+func ParseAndInsert(file string, set int, locale string, db *sql.DB) {
 
 	jsonStream, err := os.Open(file)
 	if err != nil {
@@ -197,7 +198,7 @@ func ParseAndInsert(file string, locale string, db *sql.DB) {
 			if err != nil {
 				log.Fatal(err)
 			}
-			c.Set = file
+			c.Set = "set" + strconv.Itoa(set)
 			fmt.Println(c)
 			insertCard(c, locale, db)
 		}
