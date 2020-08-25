@@ -16,5 +16,8 @@ On Linux:<br>
 - Version 1.6.0, German locale:
   - ```lordbb -v 1.6.0 de_de```
 
+## Build
+Clone the repo, go into ```lordbb``` and run ```go build```, an executable named ```lorddb``` in Linux or ```lorddb.exe``` will be created there.
+
 ## Legal
 LoR Database Builder was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games.  Riot Games does not endorse or sponsor this project.
