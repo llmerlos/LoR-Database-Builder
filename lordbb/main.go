@@ -6,9 +6,11 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 )
 
 func main() {
+	start := time.Now()
 	var locales = []string{"en_us"}
 	versionPtr := flag.String("v", "latest", "version: X.X.X or latest")
 	flag.Parse()
@@ -39,5 +41,6 @@ func main() {
 	}
 
 	process(version, locales)
-
+	elapsed := time.Since(start)
+	log.Printf("lordbb took %s", elapsed)
 }
