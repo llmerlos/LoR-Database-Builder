@@ -119,10 +119,6 @@ var JsonsList = []string{
 	"globals",
 	"set"}
 
-//AssociationsExceptions exceptions for the associations
-var AssociationsExceptions = map[string]int{
-	"02SI002": 1}
-
 //SAssets Json struct for the Assets path (included in the Card struct)
 type SAssets struct {
 	GameAbsolutePath, FullAbsolutePath string

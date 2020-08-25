@@ -271,11 +271,9 @@ func insertCard(c Card, locale string, db *sql.DB) {
 			}
 			_, err = statement.Exec(c.CardCode, as)
 			if err != nil {
-				log.Fatalln(err.Error())
-			}
-			_, notok := AssociationsExceptions[c.CardCode] //Some cards have multiple times the same card associated triggering an error of uniqueness
-			if notok {
-				break
+				if !strings.Contains(err.Error(), "UNIQUE") { //Some cards have multiple times the same card associated triggering an error of uniqueness
+					log.Fatalln(err.Error())
+				}
 			}
 		}
 
