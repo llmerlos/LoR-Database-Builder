@@ -15,6 +15,8 @@ On Linux:<br>
   - ```lordbb es_es es_mx```
 - Version 1.6.0, German locale:
   - ```lordbb -v 1.6.0 de_de```
-
+## Database Structure
+The database has the following structure
+![Screenshot](dbStructure.png)
 ## Legal
 LoR Database Builder was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games.  Riot Games does not endorse or sponsor this project.
