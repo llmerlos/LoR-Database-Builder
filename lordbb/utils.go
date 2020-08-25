@@ -4,7 +4,6 @@ import (
 	"archive/zip"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -20,9 +19,7 @@ import (
 func process(version string, locales []string) {
 	nsets := 1
 	for true { //Checks for the existance of sets given a version
-		r, err := http.Head(DDUrl + version + "/set" + strconv.Itoa(nsets) + "-en_us.zip")
-		fmt.Println(r.StatusCode)
-		fmt.Println(err)
+		r, _ := http.Head(DDUrl + version + "/set" + strconv.Itoa(nsets) + "-en_us.zip")
 		if r.StatusCode != 200 {
 			nsets--
 			break
