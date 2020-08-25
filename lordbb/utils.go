@@ -87,7 +87,7 @@ func process(version string, locales []string) {
 			log.Println("Unziping " + filepath + ".zip")
 			unzip("downloads/"+filepath+".zip", strings.ReplaceAll("downloads/"+filepath, "-lite", ""))
 			log.Println("Parsing and inserting " + jsonpath)
-			parseAndInsert(jsonpath, set, locale, sqlDb)
+			parseAndInsert(jsonpath, locale, sqlDb)
 		}
 	}
 }
@@ -196,7 +196,7 @@ func createTables(db *sql.DB, dbQ []string) {
 }
 
 //given a JSON file, a set, a locale and a databse parse the info and insert it
-func parseAndInsert(file string, set int, locale string, db *sql.DB) {
+func parseAndInsert(file string, locale string, db *sql.DB) {
 	jsonStream, err := os.Open(file)
 	if err != nil {
 		log.Fatal(err)
@@ -216,7 +216,9 @@ func parseAndInsert(file string, set int, locale string, db *sql.DB) {
 			if err != nil {
 				log.Fatal(err)
 			}
-			c.Set = "set" + strconv.Itoa(set) //Set has the be inserted manually because the json doesn't provide the info
+			if len(c.Subtypes) > 1 { //very few cards have two subtypes so for those that do
+				c.Subtype2 = c.Subtypes[1]
+			}
 			s, _ := json.MarshalIndent(c, "", "\t")
 			log.Println(string(s))
 			insertCard(c, locale, db) // insert on the database
@@ -243,12 +245,37 @@ func parseAndInsert(file string, set int, locale string, db *sql.DB) {
 //set of queries to perform for each card
 func insertCard(c Card, locale string, db *sql.DB) {
 	if locale == "en_us" { //the base stats are only inserted with "en_us" locale
+		if c.Type != "" {
+			_, okType := TypeLocale[c.Type]
+			if !okType {
+				TypeLocale[c.Type] = c.CardCode
+			}
+		}
+		if c.Subtype != "" {
+			_, okType := SubtypeLocale[c.Subtype]
+			if !okType {
+				SubtypeLocale[c.Subtype] = c.CardCode
+			}
+		}
+		if c.Subtype2 != "" {
+			_, okType := Subtype2Locale[c.Subtype2]
+			if !okType {
+				Subtype2Locale[c.Subtype2] = c.CardCode
+			}
+		}
+		if c.Supertype != "" {
+			_, okType := SupertypeLocale[c.Supertype]
+			if !okType {
+				SupertypeLocale[c.Supertype] = c.CardCode
+			}
+		}
+
 		statement, err := db.Prepare(InsertCardSQLQ)
 		if err != nil {
 			log.Fatalln(err.Error())
 		}
 		//cards table
-		_, err = statement.Exec(c.CardCode, nullS(c.Set), nullS(c.RegionRef), c.Attack, c.Health, c.Cost, nullS(c.ArtistName), nullS(c.SpellSpeedRef), nullS(c.RarityRef), nullS(c.Subtype), nullS(c.Supertype), nullS(c.Type), c.Collectible)
+		_, err = statement.Exec(c.CardCode, nullS(c.Set), nullS(c.RegionRef), c.Attack, c.Health, c.Cost, nullS(c.ArtistName), nullS(c.SpellSpeedRef), nullS(c.RarityRef), nullS(c.Subtype), nullS(c.Subtype2), nullS(c.Supertype), nullS(c.Type), c.Collectible)
 		if err != nil {
 			log.Fatalln(err.Error())
 		}
@@ -288,6 +315,52 @@ func insertCard(c Card, locale string, db *sql.DB) {
 		log.Fatalln(err.Error())
 	}
 
+	if existsValue(TypeLocale, c.CardCode) {
+		statement, err := db.Prepare(InsertLocaleGenericSQLQ)
+		if err != nil {
+			log.Fatalln(err.Error())
+		}
+		_, err = statement.Exec("type", locale, getKey(TypeLocale, c.CardCode), c.Type, sql.NullString{})
+		if err != nil {
+			log.Fatalln(err.Error())
+		}
+	}
+
+	if existsValue(SupertypeLocale, c.CardCode) {
+		statement, err := db.Prepare(InsertLocaleGenericSQLQ)
+		if err != nil {
+			log.Fatalln(err.Error())
+		}
+		_, err = statement.Exec("supertype", locale, getKey(SupertypeLocale, c.CardCode), c.Supertype, sql.NullString{})
+		if err != nil {
+			log.Fatalln(err.Error())
+		}
+	}
+
+	if existsValue(SubtypeLocale, c.CardCode) {
+		statement, err := db.Prepare(InsertLocaleGenericSQLQ)
+		if err != nil {
+			log.Fatalln(err.Error())
+		}
+		_, err = statement.Exec("subtype", locale, getKey(SubtypeLocale, c.CardCode), c.Subtype, sql.NullString{})
+		if err != nil {
+			log.Fatalln(err.Error())
+		}
+	}
+
+	if existsValue(Subtype2Locale, c.CardCode) {
+		_, ok := SubtypeLocale[getKey(Subtype2Locale, c.CardCode)]
+		if !ok {
+			statement, err := db.Prepare(InsertLocaleGenericSQLQ)
+			if err != nil {
+				log.Fatalln(err.Error())
+			}
+			_, err = statement.Exec("subtype", locale, getKey(Subtype2Locale, c.CardCode), c.Subtype2, sql.NullString{})
+			if err != nil {
+				log.Fatalln(err.Error())
+			}
+		}
+	}
 }
 
 //set of queries to perform for each core
@@ -359,4 +432,23 @@ func nullS(s string) sql.NullString {
 		String: s,
 		Valid:  true,
 	}
+}
+
+//reverse search in a map
+func existsValue(m map[string]string, value string) bool {
+	for _, val := range m {
+		if val == value {
+			return true
+		}
+	}
+	return false
+}
+
+func getKey(m map[string]string, value string) string {
+	for key, val := range m {
+		if val == value {
+			return key
+		}
+	}
+	return ""
 }

@@ -13,6 +13,7 @@ var SQLTableCreation = []string{
 			"spellSpeedRef" TEXT,
 			"rarityRef" TEXT,
 			"subtype" TEXT,
+			"subtype2" TEXT,
 			"supertype" TEXT,
 			"type" TEXT,
 			"collectible" INTEGER		
@@ -58,10 +59,11 @@ var InsertCardSQLQ = `INSERT INTO cards(
 		spellSpeedRef,
 		rarityRef,
 		subtype,
+		subtype2,
 		supertype,
 		type,
 		collectible 
-	) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+	) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 
 //InsertKeywordsSQLQ insert into keywords
 var InsertKeywordsSQLQ = `INSERT INTO keywords(
@@ -114,11 +116,6 @@ var Locales = []string{
 	"ru_ru",
 	"zh_tw"}
 
-//JsonsList List of files
-var JsonsList = []string{
-	"globals",
-	"set"}
-
 //SAssets Json struct for the Assets path (included in the Card struct)
 type SAssets struct {
 	GameAbsolutePath, FullAbsolutePath string
@@ -128,7 +125,7 @@ type SAssets struct {
 type Card struct {
 	Assets []SAssets
 	AssociatedCards, AssociatedCardRefs,
-	Keywords, KeywordRefs []string
+	Keywords, KeywordRefs, Subtypes []string
 	Set, Region, RegionRef,
 	Description, DescriptionRaw,
 	LevelupDescription, LevelupDescriptionRaw,
@@ -138,7 +135,7 @@ type Card struct {
 	CardCode,
 	SpellSpeed, SpellSpeedRef,
 	Rarity, RarityRef,
-	Subtype, Type, Supertype string
+	Subtype, Subtype2, Type, Supertype string
 	Attack, Cost, Health int
 	Collectible          bool
 }
@@ -164,3 +161,15 @@ type Global struct {
 	Regions               []GlobalRegion
 	SpellSpeeds, Rarities []GlobalDescr2
 }
+
+//TypeLocale stores cardcode references to make possible a translated type
+var TypeLocale map[string]string = make(map[string]string)
+
+//SubtypeLocale stores cardcode references to make possible a translated type
+var SubtypeLocale map[string]string = make(map[string]string)
+
+//Subtype2Locale stores cardcode references to make possible a translated type
+var Subtype2Locale map[string]string = make(map[string]string)
+
+//SupertypeLocale stores cardcode references to make possible a translated type
+var SupertypeLocale map[string]string = make(map[string]string)
