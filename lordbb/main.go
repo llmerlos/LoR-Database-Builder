@@ -5,6 +5,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"strings"
 )
 
 func main() {
@@ -12,7 +13,7 @@ func main() {
 	versionPtr := flag.String("v", "latest", "version: X.X.X or latest")
 	flag.Parse()
 
-	version := *versionPtr
+	version := strings.ReplaceAll(*versionPtr, ".", "_")
 	tail := flag.Args()
 
 	if version != "latest" {
