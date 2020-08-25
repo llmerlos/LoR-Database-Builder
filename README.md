@@ -5,7 +5,8 @@ Run from a terminal with the following (optional) parameters:<br>
 On Windows:<br>
 ```lordbb.exe -v Version locale1 locale2 locale3...```<br>
 On Linux:<br>
-```lordbb -v Version locale1 locale2 locale3...```
+```lordbb -v Version locale1 locale2 locale3...```<br><br>
+**Note:** The process of building the database is long and can take up to an hour.
 ### Examples
 - Latest version, All locales:
   - ```lordbb```
@@ -18,6 +19,9 @@ On Linux:<br>
 
 ## Build
 Clone the repo, go into ```lordbb``` and run ```go build```, an executable named ```lorddb``` in Linux or ```lorddb.exe``` will be created there.
+
+## To Do
+Write better code
 
 ## Legal
 LoR Database Builder was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games.  Riot Games does not endorse or sponsor this project.
