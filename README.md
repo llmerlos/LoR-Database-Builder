@@ -1,5 +1,10 @@
 # LoR Database Builder
 Generates an SQLite database with all the data avaliable through the Legends of Runeterra Data Dragon. It supports building for any version and include any locale you desire (en_us is always included).
+
+## Structure
+The database has the following structure:<br>
+![Screenshot](dbStructure.png)
+
 ## Usage
 Run from a terminal with the following (optional) parameters:<br>
 On Windows:<br>
