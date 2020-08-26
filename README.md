@@ -11,7 +11,7 @@ On Windows:<br>
 ```lordbb.exe -v Version locale1 locale2 locale3...```<br>
 On Linux:<br>
 ```lordbb -v Version locale1 locale2 locale3...```<br><br>
-**Note:** The process of building the database is long and can take up to an hour, also it downloads a lot of data so it may depen on your connection.
+**Note:** The process of building the database is long and can take up to an hour, also it downloads a lot of data so it may depend on your connection.
 ### Examples
 - Latest version, All locales:
   - ```lordbb```
